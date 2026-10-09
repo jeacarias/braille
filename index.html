@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El Braille: un mundo que se lee con las manos</title>
+<meta name="description" content="Historia del sistema Braille, cómo funciona y cómo llegó a Colombia y a Bogotá. Incluye alfabeto, actividad interactiva y contactos de instituciones en Bogotá.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --surface:#FFFFFF; --paper:#F4F7F3; --ink:#1B2420; --ink-soft:#4A5A51;
+  --border:#7D8C84; --line:#D3DBD2;
+  --accent:#2B6E76; --accent-strong:#1D4F55; --accent-soft:#DCEAEA;
+  --warn-bg:#FFF1CF; --warn-ink:#6B4600; --good-bg:#E1F0E5; --good-ink:#1F5A33;
+  --dot-on:#1D4F55; --focus:#B4561F;
+  --serif:'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'Public Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'Space Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --surface:#1B2620; --paper:#131B17; --ink:#ECF1EC; --ink-soft:#BBC9BF;
+    --border:#7E9086; --line:#34443B;
+    --accent:#57B0B8; --accent-strong:#8AD6DB; --accent-soft:#1F3A3D;
+    --warn-bg:#3B2F10; --warn-ink:#F3D58A; --good-bg:#1B3524; --good-ink:#9ADBB0;
+    --dot-on:#8AD6DB; --focus:#F0A36B;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:clamp(17px,1.15vw + 12px,21px);line-height:1.6}
+a{color:var(--accent-strong);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible,[role=button]:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+header.hero{background:var(--accent-soft);border-bottom:3px solid var(--accent-strong)}
+.hero .wrap{padding-top:42px;padding-bottom:34px}
+.kicker{font-family:var(--mono);font-size:.8em;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-strong);margin:0 0 8px}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.1rem,5.2vw,3.6rem);line-height:1.1;margin:0 0 10px;color:var(--accent-strong)}
+.lead{font-size:1.15em;color:var(--ink);max-width:62ch;margin:0}
+.hero-cells{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
+nav.toc{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:2px solid var(--border)}
+nav.toc ul{list-style:none;margin:0 auto;padding:6px 20px;display:flex;gap:4px 6px;flex-wrap:wrap;max-width:1100px}
+nav.toc a{display:inline-block;padding:6px 9px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.78em;color:var(--ink)}
+nav.toc a:hover{background:var(--accent-soft)}
+section{padding:46px 0 10px;scroll-margin-top:60px}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.6rem,3.4vw,2.3rem);line-height:1.2;margin:0 0 6px;color:var(--accent-strong)}
+h2 + .sub{color:var(--ink-soft);margin:0 0 22px;max-width:70ch}
+h3{font-family:var(--serif);font-weight:600;font-size:1.25em;margin:0 0 6px}
+p{margin:0 0 14px;max-width:72ch}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:20px 22px}
+.card.soft{background:var(--accent-soft)}
+.note{border-left:6px solid var(--accent);background:var(--surface);padding:12px 16px;border-radius:0 12px 12px 0;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:16px 0;max-width:76ch}
+.badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.72em;padding:3px 10px;border-radius:999px;border:2px solid currentColor;white-space:nowrap}
+.badge.ok{background:var(--good-bg);color:var(--good-ink)}
+.badge.chk{background:var(--warn-bg);color:var(--warn-ink)}
+.mono{font-family:var(--mono)}
+/* celdas braille */
+.cell{margin:0;display:inline-flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:8px 10px 6px;min-width:76px}
+.cell .lt{font-family:var(--serif);font-weight:700;font-size:1.5em;line-height:1.1;min-height:1.1em;color:var(--ink)}
+.dots{display:grid;grid-template-columns:repeat(2,18px);grid-auto-rows:18px;gap:8px 10px}
+.d{display:block;width:18px;height:18px;border-radius:50%;border:2px solid var(--border);background:transparent}
+.d.on{background:var(--dot-on);border-color:var(--dot-on)}
+.cell figcaption{font-family:var(--mono);font-size:.68em;color:var(--ink-soft)}
+.cell.big{padding:12px 16px 10px}
+.cell.big .dots{grid-template-columns:repeat(2,26px);grid-auto-rows:26px;gap:12px 14px}
+.cell.big .d{width:26px;height:26px}
+.series{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 18px}
+.series-title{font-family:var(--serif);font-weight:600;font-size:1.05em;color:var(--accent-strong);border-bottom:3px solid var(--accent-strong);padding-bottom:2px;margin:18px 0 8px;display:block;max-width:100%}
+/* widget interactivo */
+.widget{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:26px;align-items:center}
+@media (max-width:700px){.widget{grid-template-columns:1fr}}
+.pad{background:var(--accent-soft);border:3px solid var(--accent-strong);border-radius:20px;padding:12px;max-width:300px}
+.pad svg{display:block;width:100%;height:auto}
+.hole{cursor:pointer;outline:none}
+.hole .ring{fill:var(--surface);stroke:var(--border);stroke-width:4}
+.hole .ball{fill:var(--dot-on);opacity:0}
+.hole.on .ball{opacity:1}
+.hole:focus-visible .ring{stroke:var(--focus);stroke-width:6}
+.hole text{font-family:var(--mono);font-size:20px;fill:var(--ink-soft)}
+.result{min-height:150px}
+.result .big{font-family:var(--serif);font-weight:700;font-size:clamp(3rem,9vw,5rem);line-height:1;color:var(--accent-strong)}
+.result .pts{font-family:var(--mono);color:var(--ink-soft);margin:4px 0 8px}
+.result .msg{font-weight:700;min-height:1.6em}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button,.btn{font:inherit;font-weight:600;font-size:.9em;padding:10px 16px;border-radius:12px;border:2px solid var(--accent-strong);background:var(--surface);color:var(--accent-strong);cursor:pointer;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{background:var(--accent-soft)}
+button.primary,.btn.primary{background:var(--accent-strong);color:var(--surface)}
+button.primary:hover,.btn.primary:hover{background:var(--accent)}
+input[type=text]{font:inherit;font-size:1em;padding:11px 14px;border:2px solid var(--border);border-radius:12px;background:var(--surface);color:var(--ink);width:100%;max-width:460px}
+.out{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;min-height:90px}
+.out .cell{min-width:62px}
+.out .cell.prefix{background:var(--accent-soft)}
+/* matemáticas */
+.mathbox{background:var(--surface);border:2px dashed var(--accent-strong);border-radius:16px;padding:18px 22px;margin-top:20px}
+.mathbox .eq{font-family:var(--mono);font-size:1.15em;color:var(--accent-strong);margin:6px 0}
+/* líneas de tiempo */
+.tl{list-style:none;margin:0;padding:0 0 0 22px;border-left:4px solid var(--accent-strong)}
+.tl li{position:relative;margin:0 0 18px;padding:12px 18px;background:var(--surface);border:2px solid var(--border);border-radius:14px;max-width:80ch}
+.tl li::before{content:"";position:absolute;left:-35px;top:18px;width:18px;height:18px;border-radius:50%;background:var(--accent-strong);border:3px solid var(--paper)}
+.tl .yr{font-family:var(--mono);font-weight:700;color:var(--accent-strong);font-size:1.05em;display:block}
+.tl .tag{margin-left:6px}
+.tl p{margin:2px 0 0}
+/* tablas */
+.cards-contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.contact h3{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.contact dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px}
+.contact dt{font-weight:700;color:var(--ink-soft)}
+.contact dd{margin:0;overflow-wrap:anywhere}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:18px 0}
+.stat{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:14px 18px}
+.stat b{display:block;font-family:var(--mono);font-size:1.9em;color:var(--accent-strong);line-height:1.1}
+.sources{columns:2 380px;column-gap:30px;font-size:.82em}
+.sources li{margin:0 0 8px;break-inside:avoid}
+footer{margin-top:50px;padding:26px 0 40px;border-top:3px solid var(--accent-strong);background:var(--surface);font-size:.85em;color:var(--ink-soft)}
+.fig{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:14px}
+.fig svg{width:100%;height:auto;display:block}
+.fig figcaption{font-size:.82em;color:var(--ink-soft);margin-top:6px}
+svg .t{font-family:var(--sans);font-size:15px;fill:var(--ink)}
+svg .ts{font-family:var(--mono);font-size:13px;fill:var(--ink-soft)}
+svg .tb{font-family:var(--sans);font-weight:700;font-size:16px;fill:var(--accent-strong)}
+svg .dn{fill:var(--dot-on)}
+svg .dh{fill:var(--surface);stroke:var(--border);stroke-width:2}
+svg .box{fill:var(--surface);stroke:var(--border);stroke-width:2}
+@media print{nav.toc{display:none}body{background:#fff}section{break-inside:avoid}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">Historia · Sistema Braille · Colombia · Bogotá</p>
+    <h1>El Braille: un mundo que se lee con las manos</h1>
+    <p class="lead">Seis puntos en relieve bastan para escribir cualquier palabra, número o nota musical. Conoce cómo nació este sistema en Francia, cómo funciona y cómo llegó a Colombia, a Bogotá y a los salones de clase.</p>
+    <div class="hero-cells" id="heroCells" aria-label="La palabra BRAILLE escrita en Braille"></div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Contenido">
+  <ul>
+    <li><a href="#que-es">¿Qué es?</a></li>
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#practica">Pruébalo</a></li>
+    <li><a href="#historia">Historia</a></li>
+    <li><a href="#colombia">Colombia y Bogotá</a></li>
+    <li><a href="#hoy">Hoy en Bogotá</a></li>
+    <li><a href="#alfabeto">Alfabeto</a></li>
+    <li><a href="#contactos">Contactos</a></li>
+    <li><a href="#fuentes">Fuentes</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+
+<!-- ¿QUÉ ES? -->
+<section id="que-es">
+  <h2>¿Qué es el Braille?</h2>
+  <p class="sub">Un sistema de lectura y escritura táctil: se lee con la yema de los dedos.</p>
+  <div class="grid2">
+    <div>
+      <p>El Braille <strong>no es un idioma</strong>: es un sistema de escritura. Por eso se puede adaptar al español, al inglés o a casi cualquier lengua. Con él se representan letras, números, signos de puntuación, símbolos matemáticos y hasta música.</p>
+      <p>Todo parte de la <strong>celda Braille</strong>: un rectángulo con <strong>seis posiciones</strong>, en dos columnas de tres. Cada posición puede tener un punto en relieve o estar vacía. Según cuáles puntos estén en relieve, se forma una letra distinta.</p>
+      <div class="note"><strong>Un detalle importante:</strong> los puntos se numeran de arriba abajo, primero la columna izquierda (1, 2, 3) y luego la derecha (4, 5, 6). Así se nombra cada letra: la <em>b</em> es «puntos 1 y 2».</div>
+    </div>
+    <figure class="fig" style="margin:0">
+      <svg viewBox="0 0 360 250" role="img" aria-labelledby="t1 d1">
+        <title id="t1">La celda Braille numerada</title>
+        <desc id="d1">Dos columnas de tres puntos. La columna izquierda tiene los puntos 1, 2 y 3 de arriba abajo, y la derecha los puntos 4, 5 y 6. Se muestra la letra b con los puntos 1 y 2 en relieve.</desc>
+        <rect class="box" x="20" y="14" width="150" height="222" rx="16"/>
+        <g>
+          <circle class="dn" cx="65" cy="62" r="19"/><circle class="dn" cx="65" cy="125" r="19"/><circle class="dh" cx="65" cy="188" r="19"/>
+          <circle class="dh" cx="125" cy="62" r="19"/><circle class="dh" cx="125" cy="125" r="19"/><circle class="dh" cx="125" cy="188" r="19"/>
+        </g>
+        <text class="tb" x="92" y="31" text-anchor="middle">letra b</text>
+        <text class="ts" x="40" y="66" text-anchor="middle">1</text><text class="ts" x="40" y="129" text-anchor="middle">2</text><text class="ts" x="40" y="192" text-anchor="middle">3</text>
+        <text class="ts" x="150" y="66" text-anchor="middle">4</text><text class="ts" x="150" y="129" text-anchor="middle">5</text><text class="ts" x="150" y="192" text-anchor="middle">6</text>
+        <circle class="dn" cx="206" cy="80" r="9"/><text class="t" x="224" y="85">punto en relieve</text>
+        <circle class="dh" cx="206" cy="118" r="9"/><text class="t" x="224" y="123">posición vacía</text>
+        <text class="t" x="196" y="170">Cada celda ocupa</text><text class="t" x="196" y="190">el tamaño justo</text><text class="t" x="196" y="210">de una yema.</text>
+      </svg>
+      <figcaption>La celda Braille y la numeración de sus puntos.</figcaption>
+    </figure>
+  </div>
+
+  <div class="mathbox">
+    <h3>Las matemáticas del Braille</h3>
+    <p>Cada posición tiene dos opciones (punto o no punto). Con seis posiciones, el número de combinaciones es:</p>
+    <div class="eq">2 × 2 × 2 × 2 × 2 × 2 = 2<sup>6</sup> = 64</div>
+    <p>Una de esas 64 combinaciones es la celda totalmente vacía (el espacio), así que quedan <strong>63 signos</strong> con al menos un punto. ¿Y si fueran 12 puntos, como en el sistema de Barbier? Serían 2<sup>12</sup> = 4 096 combinaciones, pero un dedo no alcanza a sentirlas todas con un solo toque. Más no siempre es mejor: Louis Braille ganó al <em>reducir</em>.</p>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section id="como-funciona">
+  <h2>Cómo funciona</h2>
+  <p class="sub">Un patrón lógico: unas pocas reglas permiten construir todo el alfabeto.</p>
+  <div class="grid2">
+    <div>
+      <h3>Tres series de letras</h3>
+      <p><strong>Serie 1:</strong> de la <em>a</em> a la <em>j</em>, usando solo los puntos 1, 2, 4 y 5.</p>
+      <p><strong>Serie 2:</strong> de la <em>k</em> a la <em>t</em>: son las mismas diez formas de la serie 1, pero agregando el punto 3. Por ejemplo, <em>a</em> = 1 y <em>k</em> = 1-3.</p>
+      <p><strong>Serie 3:</strong> la <em>u</em>, <em>v</em>, <em>x</em>, <em>y</em>, <em>z</em> repiten las primeras formas agregando los puntos 3 y 6. Letras propias del español (<em>ñ</em>, <em>ü</em>, las vocales con tilde) y la <em>w</em> tienen formas especiales.</p>
+      <div class="series" id="ejSeries" aria-label="Ejemplo: a, k y u"></div>
+    </div>
+    <div>
+      <h3>Números y mayúsculas</h3>
+      <p>Para escribir <strong>números</strong> se antepone el <em>signo de número</em> (puntos 3-4-5-6) a las letras <em>a</em> a <em>j</em>: <em>a</em> pasa a ser 1, <em>b</em> es 2, y así hasta <em>j</em> = 0.</p>
+      <p>Para una <strong>mayúscula</strong> se antepone el <em>signo de mayúscula</em> (puntos 4-6) a la letra.</p>
+      <div class="series" id="ejNum" aria-label="Ejemplo: el número 12 y la letra A mayúscula"></div>
+      <h3 style="margin-top:18px">Leer y escribir</h3>
+      <p>Se <strong>lee</strong> de izquierda a derecha, con los dedos índices, deslizándolos sobre cada línea. Para <strong>escribir</strong> a mano se usa una <em>regleta</em> y un <em>punzón</em>: como se perfora el papel por detrás, se escribe de derecha a izquierda y en espejo; al voltear la hoja, los puntos quedan en relieve y se leen normalmente. También hay máquinas de escribir Braille, impresoras y líneas Braille para computador.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRACTICA -->
+<section id="practica">
+  <h2>Pruébalo tú mismo</h2>
+  <p class="sub">Toca los círculos para poner o quitar puntos. También puedes usar las teclas 1 a 6.</p>
+  <div class="card soft">
+    <div class="widget">
+      <div class="pad" id="pad" tabindex="0" aria-label="Celda Braille interactiva. Usa las teclas del 1 al 6 para poner o quitar puntos.">
+        <svg viewBox="0 0 240 330" role="group" aria-label="Seis puntos" id="padSvg"></svg>
+      </div>
+      <div>
+        <div class="result" aria-live="polite">
+          <div class="big" id="resBig">espacio</div>
+          <div class="pts" id="resPts">Celda vacía</div>
+          <div class="msg" id="resMsg"></div>
+        </div>
+        <div class="btns">
+          <button type="button" id="btnClear">Limpiar celda</button>
+          <button type="button" class="primary" id="btnReto">Reto: letra al azar</button>
+        </div>
+        <p id="retoTxt" class="mono" style="margin-top:12px"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:22px">
+    <h3>Escribe tu nombre en Braille</h3>
+    <p>Escribe una palabra o tu nombre (letras, tildes, ñ y números). Las mayúsculas y los números llevan antes una celda de <strong>signo</strong> (⇧ = mayúscula, # = número): no es una letra: solo aparece cuando escribes una mayúscula o un número.</p>
+    <label for="nameIn" class="sr">Tu nombre</label>
+    <input type="text" id="nameIn" maxlength="30" value="Jerónimo" autocomplete="off">
+    <button type="button" class="btn" id="nameClear" style="margin-top:10px">Borrar todo</button>
+    <div class="out" id="nameOut" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- HISTORIA MUNDIAL -->
+<section id="historia">
+  <h2>Historia: de un código militar a un sistema universal</h2>
+  <p class="sub">La invención del Braille fue obra de un joven estudiante ciego que tomó una idea ajena y la mejoró.</p>
+
+  <div class="grid2" style="margin-bottom:26px">
+    <figure class="fig" style="margin:0">
+      <svg viewBox="0 0 420 270" role="img" aria-labelledby="t2 d2">
+        <title id="t2">Escritura nocturna de Barbier frente al Braille</title>
+        <desc id="d2">A la izquierda, una celda de doce puntos en dos columnas de seis. A la derecha, una celda de seis puntos en dos columnas de tres.</desc>
+        <rect class="box" x="20" y="40" width="120" height="210" rx="14"/>
+        <g id="barb"></g>
+        <rect class="box" x="250" y="40" width="120" height="210" rx="14"/>
+        <g id="brai"></g>
+        <text class="tb" x="80" y="26" text-anchor="middle">Barbier, 1821</text>
+        <text class="tb" x="310" y="26" text-anchor="middle">Braille, 1824</text>
+        <text class="t" x="195" y="150" text-anchor="middle" style="font-size:30px;font-weight:700">→</text>
+        <text class="ts" x="80" y="266" text-anchor="middle">12 puntos</text>
+        <text class="ts" x="310" y="266" text-anchor="middle">6 puntos</text>
+      </svg>
+      <figcaption>Braille redujo los 12 puntos de la «escritura nocturna» a 6, para que cada signo se sienta de un solo toque.</figcaption>
+    </figure>
+    <div>
+      <p>Antes del Braille, las personas ciegas leían con letras grandes en relieve, parecidas a las impresas: lentas de leer y casi imposibles de escribir por cuenta propia. Y en la mayor parte del mundo no existían escuelas para ellas.</p>
+      <p>Barbier, un capitán del ejército francés, ideó la <em>escritura nocturna</em> para que los soldados leyeran mensajes en la oscuridad sin encender luces. Un joven estudiante, Louis Braille, entendió que el sistema podía servir para los ciegos, pero que tenía demasiados puntos.</p>
+    </div>
+  </div>
+
+  <ol class="tl">
+    <li><span class="yr">1784</span><p>Valentin Haüy funda en París la primera escuela para ciegos. Allí se enseña con letras latinas grandes en relieve sobre papel grueso.</p></li>
+    <li><span class="yr">4 de enero de 1809</span><p>Nace Louis Braille en Coupvray, un pueblo cercano a París (Francia).</p></li>
+    <li><span class="yr">1812</span><p>A los tres años sufre un accidente con herramientas en el taller de su padre, que fabricaba arneses. La lesión se complica y a los cinco años queda completamente ciego.</p></li>
+    <li><span class="yr">1819</span><p>A los diez años ingresa al Instituto Real para Jóvenes Ciegos, en París.</p></li>
+    <li><span class="yr">1821</span><p>El capitán Charles Barbier visita el instituto y presenta su «escritura nocturna», de 12 puntos en relieve.</p></li>
+    <li><span class="yr">1824</span><p>Con solo 15 años, Louis Braille completa su propio sistema de 6 puntos y lo presenta a sus compañeros. <small>(Algunas fuentes lo datan en 1825.)</small></p></li>
+    <li><span class="yr">1829</span><p>Publica la primera versión de su método de escritura con puntos, para palabras, música y canto llano.</p></li>
+    <li><span class="yr">1834</span><p>Termina el código para escribir música en Braille: músico y organista, quería que los ciegos también pudieran leer partituras.</p></li>
+    <li><span class="yr">6 de enero de 1852</span><p>Muere Louis Braille, a causa de la tuberculosis. Su sistema aún no era aceptado de forma oficial.</p></li>
+    <li><span class="yr">1854</span><p>Francia adopta el Braille como sistema oficial de comunicación para las personas ciegas.</p></li>
+    <li><span class="yr">1860</span><p>El sistema llega a una escuela para ciegos de San Luis (Estados Unidos) y comienza a extenderse por el mundo.</p></li>
+    <li><span class="yr">2018 → 2019</span><p>La ONU proclama el <strong>4 de enero</strong> (fecha de nacimiento de Braille) como <strong>Día Mundial del Braille</strong>. Se celebra desde 2019.</p></li>
+  </ol>
+</section>
+
+<!-- COLOMBIA -->
+<section id="colombia">
+  <h2>El Braille en Colombia y Bogotá</h2>
+  <p class="sub">La educación de las personas ciegas en Colombia se organizó en el siglo XX, y gran parte de esa historia ocurrió en Bogotá.</p>
+  <p>Las fechas marcadas como <span class="badge chk">fuente secundaria</span> provienen de trabajos académicos o presentaciones y conviene contrastarlas antes de citarlas como dato definitivo.</p>
+  <ol class="tl">
+    <li><span class="yr">1899</span><span class="badge chk tag">fuente secundaria</span><p>Se decreta la creación del Instituto para Ciegos de Santa Fe de Bogotá, un primer intento de institucionalizar la educación de las personas ciegas en la capital.</p></li>
+    <li><span class="yr">1926</span><span class="badge chk tag">fuente secundaria</span><p>Se atribuye a Juan Pardo Ospina el impulso de una escuela para ciegos en Bogotá que adopta el sistema Braille y trae de Estados Unidos pizarras, punzones y máquinas de escribir Braille.</p></li>
+    <li><span class="yr">1931</span><p>La Ley 24 establece que la instrucción de los ciegos menores de edad será obligatoria en todo el país y crea el «Fondo de los ciegos». Menciona escuelas en Medellín y Bogotá y al Instituto Colombiano de Ciegos.</p></li>
+    <li><span class="yr">1938</span><p>La Ley 143 crea la Federación Nacional de Ciegos y Sordomudos.</p></li>
+    <li><span class="yr">1955</span><p>El Decreto-ley 1955 disuelve esa Federación y crea el <strong>Instituto Nacional para Ciegos (INCI)</strong> y el Instituto Nacional para Sordos (INSOR). Ambos tienen su domicilio en Bogotá.</p></li>
+    <li><span class="yr">hacia 1962</span><p>Nace en Bogotá el Centro de Rehabilitación para Adultos Ciegos (CRAC), que en 2023 celebró 61 años de trabajo. En 1966, la Ley 22 le asignó un auxilio del Estado para construir sus edificios.</p></li>
+    <li><span class="yr">1994</span><p>El Decreto 369 reorganiza la estructura y funciones del INCI: sede en Bogotá y alcance en todo el territorio nacional.</p></li>
+    <li><span class="yr">2009</span><p>Colombia ratifica con la Ley 1346 la Convención sobre los Derechos de las Personas con Discapacidad, que reconoce el Braille como medio de comunicación.</p></li>
+    <li><span class="yr">2017</span><p>El Decreto 1421 (educación inclusiva) se ocupa de la producción, dotación y distribución de material en Braille.</p></li>
+    <li><span class="yr">2018</span><p>El INCI radica el primer proyecto de ley para exigir Braille en empaques de alimentos, medicinas y servicios turísticos. Según el propio INCI, el proyecto no fue aprobado.</p></li>
+    <li><span class="yr">2022</span><p>La <strong>Ley 2265</strong> declara el <strong>4 de enero como Día Nacional del Sistema Braille</strong> y reconoce a la Imprenta del INCI como la Imprenta Nacional Braille de Colombia.</p></li>
+  </ol>
+  <div class="note"><strong>Dato para pensar:</strong> la mayor parte de la población ciega del país está en las ciudades grandes. Según el Registro para la Localización y Caracterización de las Personas con Discapacidad, en Bogotá hay <strong>73 063</strong> personas registradas con problemas de visión (cifra citada en 2023).</div>
+</section>
+
+<!-- HOY -->
+<section id="hoy">
+  <h2>El Braille hoy en Bogotá</h2>
+  <p class="sub">Dónde puedes encontrarlo, aprenderlo o usarlo en la ciudad.</p>
+  <div class="grid3">
+    <div class="card">
+      <h3>En la vida diaria</h3>
+      <p>El INCI promovió una <strong>nueva familia de billetes</strong> con marcas para que las personas ciegas los reconozcan, junto con el Banco de la República, y se imprimen <strong>tarjetas electorales en Braille</strong>.</p>
+      <p>El Acuerdo 764 del Concejo de Bogotá exige Braille en los empaques de medicamentos; el INCI trabaja con otras entidades para reglamentarlo y existe una norma técnica internacional (NTC-ISO 17351) para escribirlo en esos empaques.</p>
+    </div>
+    <div class="card">
+      <h3>En las bibliotecas</h3>
+      <p>BibloRed ofrece <strong>cursos gratuitos de escritura Braille</strong> en bibliotecas como Bosa, Julio Mario Santo Domingo, Usaquén y El Tunal, y tiene <strong>impresoras Braille</strong> y magnificadores de pantalla en diez bibliotecas (entre ellas El Tunal, Las Ferias, La Victoria, Suba, Usaquén, Lago Timiza, Virgilio Barco y Julio Mario Santo Domingo). Quien use la impresora debe llevar su propio papel.</p>
+      <p>La Biblioteca Pública Bosa, en el barrio El Recreo, tiene material bibliográfico en Braille y en macrotipo.</p>
+    </div>
+    <div class="card">
+      <h3>En línea</h3>
+      <p>La <strong>Biblioteca Virtual para Ciegos de Colombia</strong>, del INCI, reúne más de 10 000 títulos en formatos accesibles (PDF accesibles, Word, Daisy y audiolibros).</p>
+      <p>En <a href="https://elearning.inci.gov.co" target="_blank" rel="noopener">elearning.inci.gov.co</a> hay cursos virtuales gratuitos, entre ellos de Braille para familiares y docentes. El tutorial «Los Secretos del Braille» está en el canal de YouTube del INCI.</p>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>1 900+</b>personas con ceguera o baja visión atendidas por el CRAC en Bogotá durante 2022.</div>
+    <div class="stat"><b>10 000+</b>títulos accesibles en la Biblioteca Virtual del INCI.</div>
+    <div class="stat"><b>10</b>bibliotecas de BibloRed con impresoras Braille y otros equipos.</div>
+  </div>
+</section>
+
+<!-- ALFABETO -->
+<section id="alfabeto">
+  <h2>El alfabeto Braille en español</h2>
+  <p class="sub">Es la versión que se usa en Colombia. Los números bajo cada celda indican qué puntos están en relieve.</p>
+  <div class="btns" style="margin:0 0 6px">
+    <a class="btn primary" href="alfabeto_braille_espanol.png" download>Descargar imagen del alfabeto (PNG)</a>
+    <a class="btn" href="alfabeto_braille_espanol.png" target="_blank" rel="noopener">Ver imagen completa</a>
+  </div>
+  <p style="font-size:.8em;color:var(--ink-soft)">La imagen es un archivo aparte: guárdala en la misma carpeta que esta página para que los botones funcionen.</p>
+  <div id="alfa"></div>
+</section>
+
+<!-- CONTACTOS -->
+<section id="contactos">
+  <h2>Dónde pedir más información en Bogotá</h2>
+  <p class="sub">Las etiquetas indican qué datos se comprobaron en una fuente oficial en octubre de 2026 y cuáles conviene confirmar antes de llamar o ir.</p>
+  <div class="cards-contact">
+
+    <article class="card contact">
+      <h3>Instituto Nacional para Ciegos (INCI) <span class="badge ok">✔ Verificado</span></h3>
+      <p style="margin:0">Entidad nacional adscrita al Ministerio de Educación. Imprenta Nacional Braille y Biblioteca Virtual.</p>
+      <dl>
+        <dt>Dirección</dt><dd>Carrera 13 No. 34-91, Bogotá</dd>
+        <dt>Teléfono</dt><dd>PBX <a href="tel:+576013846666">601 384 6666</a></dd>
+        <dt>Correo</dt><dd><a href="mailto:aciudadano@inci.gov.co">aciudadano@inci.gov.co</a></dd>
+        <dt>Web</dt><dd><a href="https://www.inci.gov.co" target="_blank" rel="noopener">inci.gov.co</a></dd>
+      </dl>
+    </article>
+
+    <article class="card contact">
+      <h3>BibloRed (bibliotecas públicas) <span class="badge chk">⚠ Confirmar</span></h3>
+      <p style="margin:0">Cursos gratuitos de Braille, impresoras Braille y colecciones accesibles.</p>
+      <dl>
+        <dt>Teléfono</dt><dd>PBX <a href="tel:+576015803050">(601) 580 30 50</a></dd>
+        <dt>Web</dt><dd><a href="https://www.biblored.gov.co" target="_blank" rel="noopener">biblored.gov.co</a></dd>
+        <dt>Atención</dt><dd>Chat en línea y WhatsApp (lunes a sábado, según el portal Bogotá)</dd>
+      </dl>
+    </article>
+
+    <article class="card contact">
+      <h3>Biblioteca Pública Bosa <span class="badge chk">⚠ Confirmar</span></h3>
+      <p style="margin:0">Parte de BibloRed. Tiene material en Braille y macrotipo, además de cursos de Braille.</p>
+      <dl>
+        <dt>Dirección</dt><dd>Quinto piso del Centro Comercial Metro Recreo, barrio El Recreo (Bosa)</dd>
+        <dt>Teléfono</dt><dd>Consulta el PBX de BibloRed: (601) 580 30 50</dd>
+      </dl>
+    </article>
+
+    <article class="card contact">
+      <h3>Biblioteca Nacional de Colombia <span class="badge chk">⚠ Confirmar teléfono</span></h3>
+      <p style="margin:0">Cuenta con espacios y recursos accesibles, entre ellos una sala dedicada a la accesibilidad.</p>
+      <dl>
+        <dt>Dirección</dt><dd>Calle 24 No. 5-60, Bogotá</dd>
+        <dt>Horario</dt><dd>Lunes a viernes, 8:00 a. m. a 6:00 p. m.; sábados, 9:00 a. m. a 4:00 p. m.</dd>
+        <dt>Teléfono</dt><dd>Hay varios números publicados; confirma el vigente en el sitio oficial.</dd>
+        <dt>Web</dt><dd><a href="https://bibliotecanacional.gov.co" target="_blank" rel="noopener">bibliotecanacional.gov.co</a></dd>
+      </dl>
+    </article>
+
+    <article class="card contact">
+      <h3>Centro de Rehabilitación para Adultos Ciegos (CRAC) <span class="badge chk">⚠ Confirmar</span></h3>
+      <p style="margin:0">Rehabilitación integral para personas ciegas y con baja visión: orientación y movilidad con bastón, destrezas de la vida diaria, salud visual e inclusión.</p>
+      <dl>
+        <dt>Ciudad</dt><dd>Bogotá</dd>
+        <dt>Contacto</dt><dd>No se pudo verificar teléfono ni dirección en una fuente oficial. Búscalos en el sitio del CRAC.</dd>
+      </dl>
+    </article>
+
+    <article class="card contact">
+      <h3>Fundación Saldarriaga Concha <span class="badge chk">⚠ Confirmar</span></h3>
+      <p style="margin:0">Fundación con sede en Bogotá que trabaja por la inclusión de personas con discapacidad y personas mayores.</p>
+      <dl>
+        <dt>Web</dt><dd><a href="https://www.saldarriagaconcha.org" target="_blank" rel="noopener">saldarriagaconcha.org</a></dd>
+        <dt>Dirección</dt><dd>En documentos antiguos aparece Carrera 11 No. 94-02, oficina 502. Confirma que siga vigente.</dd>
+      </dl>
+    </article>
+
+  </div>
+  <div class="note"><strong>Línea 195:</strong> es la línea de información de la Alcaldía de Bogotá y puede orientarte hacia el servicio distrital más cercano.</div>
+</section>
+
+<!-- FECHAS Y PREGUNTAS -->
+<section id="fechas">
+  <h2>Fechas para recordar</h2>
+  <div class="grid3">
+    <div class="card"><h3><span class="mono">4 de enero</span></h3><p>Día Mundial del Braille (ONU, desde 2019) y Día Nacional del Sistema Braille en Colombia (Ley 2265 de 2022). Es el cumpleaños de Louis Braille.</p></div>
+    <div class="card"><h3><span class="mono">15 de octubre</span></h3><p>Día Internacional del Bastón Blanco: símbolo de autonomía e independencia de las personas con discapacidad visual. En Bogotá, el CRAC y TransMilenio lo conmemoran con actividades de sensibilización.</p></div>
+    <div class="card"><h3>Para conversar en clase</h3>
+      <ul style="margin:0;padding-left:20px">
+        <li>¿Por qué se redujo de 12 a 6 puntos y no se aumentó?</li>
+        <li>¿Qué patrón ves entre la serie 1 y la serie 2?</li>
+        <li>¿Qué lugares de tu barrio o colegio podrían tener Braille?</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FUENTES -->
+<section id="fuentes">
+  <h2>Fuentes consultadas</h2>
+  <p class="sub">Consultadas en octubre de 2026. Los datos de contacto cambian: confírmalos antes de usarlos.</p>
+  <ul class="sources">
+    <li><a href="https://www.inci.gov.co/sites/default/files/10%2008%202026%20%20Atencion%20emergencias.pdf" target="_blank" rel="noopener">INCI · comunicado (agosto de 2026), con dirección, PBX y correo</a></li>
+    <li><a href="https://www.mineducacion.gov.co/1621/article-85392.html" target="_blank" rel="noopener">Ministerio de Educación · ficha del INCI</a></li>
+    <li><a href="https://www.mineducacion.gov.co/1780/articles-103362_archivo_pdf.pdf" target="_blank" rel="noopener">Decreto 1955 de 1955 (creación del INCI y el INSOR)</a></li>
+    <li><a href="https://www.mineducacion.gov.co/1780/w3-article-103006.html" target="_blank" rel="noopener">Ley 24 de 1931 (escuelas para ciegos)</a></li>
+    <li><a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma_pdf.php?i=14929" target="_blank" rel="noopener">Decreto 369 de 1994 (estructura del INCI)</a></li>
+    <li><a href="https://www.inci.gov.co/blog/proteccion-del-braille-en-colombia" target="_blank" rel="noopener">INCI · Protección del braille en Colombia</a></li>
+    <li><a href="https://www.inci.gov.co/blog/desarrollo-del-braille-en-el-inci" target="_blank" rel="noopener">INCI · Desarrollo del braille en el INCI</a></li>
+    <li><a href="https://www.inci.gov.co/blog/el-braille-de-hoy" target="_blank" rel="noopener">INCI · El braille de hoy</a></li>
+    <li><a href="https://www.asuntoslegales.com.co/analisis/carlos-parra-dussan-533041/dia-de-braille-en-colombia-3524623" target="_blank" rel="noopener">Asuntos Legales · Día de Braille en Colombia (Ley 2265)</a></li>
+    <li><a href="https://www.famisanar.com.co/blog/braile" target="_blank" rel="noopener">Famisanar · Braille: definición, importancia y desafíos</a></li>
+    <li><a href="https://canaltrece.com.co/noticias/alfabetizacion-digital-inci-colombia-2025/" target="_blank" rel="noopener">Canal Trece · El braille y lo digital (Biblioteca Virtual del INCI)</a></li>
+    <li><a href="https://bogota.gov.co/mi-ciudad/cultura-recreacion-y-deporte/cursos-gratuitos-de-braille-y-lengua-de-senas-colombiana-en-biblored" target="_blank" rel="noopener">Portal Bogotá · cursos gratuitos de braille en BibloRed</a></li>
+    <li><a href="https://bogota.gov.co/mi-ciudad/cultura-recreacion-y-deporte/planes-en-bogota-conoce-y-accede-equipos-tiflotecnicos-de-biblored" target="_blank" rel="noopener">Portal Bogotá · equipos tiflotécnicos de BibloRed</a></li>
+    <li><a href="https://bogota.gov.co/mi-ciudad/cultura-recreacion-y-deporte/planes-en-bogota-oferta-de-la-biblored-para-personas-con-discapacidad" target="_blank" rel="noopener">Portal Bogotá · oferta de BibloRed para personas con discapacidad</a></li>
+    <li><a href="https://bogota.gov.co/que-hacer/cultura/conversar-sobre-literatura-de-vampiros-en-biblioteca-publica-de-bosa" target="_blank" rel="noopener">Portal Bogotá · Biblioteca Pública Bosa</a></li>
+    <li><a href="https://bogota.gov.co/mi-ciudad/cultura-recreacion-y-deporte/canales-de-atencion-de-red-de-bibliotecas-publicas-de-bogota-whastapp" target="_blank" rel="noopener">Portal Bogotá · canales de atención de BibloRed</a></li>
+    <li><a href="https://visitbogota.co/en/atractivo/history/biblioteca-nacional-colombia-all-676" target="_blank" rel="noopener">Visit Bogotá · Biblioteca Nacional de Colombia</a></li>
+    <li><a href="https://lafm.com.co/estilo-de-vida/como-ayudar-a-las-personas-con-discapacidad-visual-a-movilizarse" target="_blank" rel="noopener">La FM · cifras de Bogotá y del CRAC</a></li>
+    <li><a href="https://www.brailleliteracycanada.ca/en/braille/history" target="_blank" rel="noopener">Braille Literacy Canada · historia del Braille</a></li>
+    <li><a href="https://www.elimparcial.com/mundo/2024/01/04/la-historia-del-ingenioso-nino-ciego-que-invento-el-sistema-braille/" target="_blank" rel="noopener">BBC Mundo (vía El Imparcial) · el niño que inventó el Braille</a></li>
+    <li><a href="https://www.lecturalia.com/blog/2022/10/13/braille-el-sistema-que-facilita-la-escritura-y-lectura-a-las-personas-con-discapacidad-visual" target="_blank" rel="noopener">Lecturalia · Braille, el sistema de escritura</a></li>
+    <li><a href="https://www.biografiasyvidas.com/biografia/b/braille.htm" target="_blank" rel="noopener">Biografías y Vidas · Louis Braille</a></li>
+    <li><a href="https://www.once.es/servicios-sociales/braille" target="_blank" rel="noopener">ONCE · el Braille: alfabeto, números y mayúsculas</a></li>
+    <li><a href="https://www.once.es/noticias/la-onu-reconoce-el-4-de-enero-como-dia-internacional-del-braille-1" target="_blank" rel="noopener">ONCE · la ONU reconoce el Día Mundial del Braille</a></li>
+    <li><a href="https://digitallibrary.un.org/record/1651286/files/A_C-3_73_L-5_Rev-1-ES.pdf" target="_blank" rel="noopener">ONU · proyecto de resolución A/C.3/73/L.5/Rev.1</a></li>
+    <li><a href="https://revistas.unal.edu.co/index.php/psicologia/article/view/32713" target="_blank" rel="noopener">Ospina Cubillos (1963) · Psicología y educación del ciego colombiano</a></li>
+    <li><a href="https://es.slideshare.net/MonicaHernandezGuerrero/historia-del-braile" target="_blank" rel="noopener">Presentación «Historia del braile» (fuente secundaria: Juan Pardo Ospina, 1926)</a></li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Material de aula · 2026. Alfabeto en español según las convenciones de la Comisión Braille Española (ONCE). Sitio informativo; los datos de contacto deben confirmarse en las páginas oficiales.
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+var MAP={a:'1',b:'12',c:'14',d:'145',e:'15',f:'124',g:'1245',h:'125',i:'24',j:'245',
+k:'13',l:'123',m:'134',n:'1345',o:'135',p:'1234',q:'12345',r:'1235',s:'234',t:'2345',
+u:'136',v:'1236',x:'1346',y:'13456',z:'1356',w:'2456','ñ':'12456','ü':'1256',
+'á':'12356','é':'2346','í':'34','ó':'346','ú':'23456'};
+var NUM={'1':'a','2':'b','3':'c','4':'d','5':'e','6':'f','7':'g','8':'h','9':'i','0':'j'};
+var REV={};Object.keys(MAP).forEach(function(k){REV[MAP[k]]=k;});
+var ORDER=[1,4,2,5,3,6];
+
+function dotsHTML(pts){
+  return ORDER.map(function(n){return '<i class="d'+(pts.indexOf(String(n))>-1?' on':'')+'"></i>';}).join('');
+}
+function cellHTML(pts,label,cap,cls){
+  var spoken=pts?('puntos '+pts.split('').join(', ')):'sin puntos';
+  var c=(cap===undefined||cap===null)?(pts?pts.split('').join('-'):'espacio'):cap;
+  return '<figure class="cell '+(cls||'')+'" role="group" aria-label="'+label+': '+spoken+'">'+
+    '<div class="lt">'+label+'</div><div class="dots" aria-hidden="true">'+dotsHTML(pts)+'</div><figcaption>'+c+'</figcaption></figure>';
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* Encabezado: BRAILLE */
+(function(){
+  var w='BRAILLE',h='';
+  for(var i=0;i<w.length;i++){
+    var ch=w[i];
+    h+=cellHTML(MAP[ch.toLowerCase()],ch,null,'');
+  }
+  document.getElementById('heroCells').innerHTML=h;
+})();
+
+/* Ejemplos de series */
+document.getElementById('ejSeries').innerHTML=
+  cellHTML(MAP.a,'a')+cellHTML(MAP.k,'k')+cellHTML(MAP.u,'u');
+document.getElementById('ejNum').innerHTML=
+  cellHTML('3456','#','signo núm.','prefix')+cellHTML(MAP.a,'1')+cellHTML(MAP.b,'2')+
+  '<span style="width:14px"></span>'+cellHTML('46','⇧','signo mayús.','prefix')+cellHTML(MAP.a,'a');
+
+/* Dibujos Barbier / Braille */
+(function(){
+  function circles(cx,top,rows,dy,r,filled){
+    var s='';
+    for(var c=0;c<2;c++)for(var r2=0;r2<rows;r2++){
+      var x=cx+(c?22:-22),y=top+r2*dy;
+      var on=filled(c,r2);
+      s+='<circle class="'+(on?'dn':'dh')+'" cx="'+x+'" cy="'+y+'" r="'+r+'"/>';
+    }
+    return s;
+  }
+  var barbOn={'0-0':1,'1-1':1,'0-3':1,'1-4':1,'0-5':1};
+  document.getElementById('barb').innerHTML=circles(80,67,6,30,9,function(c,r){return !!barbOn[c+'-'+r];});
+  document.getElementById('brai').innerHTML=circles(310,80,3,60,15,function(c,r){return (c===0&&r<2);});
+})();
+
+/* Celda interactiva */
+var st=[0,0,0,0,0,0],target=null;
+var pos=[[70,70],[70,165],[70,260],[170,70],[170,165],[170,260]];
+var svg=document.getElementById('padSvg');
+var NS='http://www.w3.org/2000/svg';
+var holes=[];
+pos.forEach(function(p,i){
+  var g=document.createElementNS(NS,'g');
+  g.setAttribute('class','hole');g.setAttribute('role','button');g.setAttribute('tabindex','0');
+  g.setAttribute('aria-pressed','false');g.setAttribute('aria-label','Punto '+(i+1));
+  g.innerHTML='<circle class="ring" cx="'+p[0]+'" cy="'+p[1]+'" r="38"/>'+
+    '<circle class="ball" cx="'+p[0]+'" cy="'+p[1]+'" r="28"/>'+
+    '<text x="'+p[0]+'" y="'+(p[1]+7)+'" text-anchor="middle" style="fill:var(--surface);font-weight:700;display:none" class="num">'+(i+1)+'</text>'+
+    '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="46" fill="transparent"/>';
+  g.addEventListener('click',function(){tog(i);});
+  g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();tog(i);}});
+  svg.appendChild(g);holes.push(g);
+  var lab=document.createElementNS(NS,'text');
+  lab.setAttribute('x',i<3?20:222);lab.setAttribute('y',p[1]+7);lab.setAttribute('text-anchor','middle');
+  lab.setAttribute('class','lbl');lab.setAttribute('style','font-family:var(--mono);font-size:20px;fill:var(--ink-soft)');
+  lab.textContent=i+1;svg.appendChild(lab);
+});
+function key(){return st.map(function(v,i){return v?String(i+1):'';}).join('');}
+function tog(i){st[i]=st[i]?0:1;render();}
+function render(){
+  holes.forEach(function(g,i){
+    g.setAttribute('class','hole'+(st[i]?' on':''));
+    g.setAttribute('aria-pressed',st[i]?'true':'false');
+  });
+  var k=key(),big=document.getElementById('resBig'),pts=document.getElementById('resPts'),msg=document.getElementById('resMsg');
+  var txt,sub;
+  if(k===''){txt='espacio';sub='Celda vacía';}
+  else if(k==='3456'){txt='#';sub='Signo de número (puntos 3, 4, 5, 6)';}
+  else if(k==='46'){txt='⇧';sub='Signo de mayúscula (puntos 4, 6)';}
+  else if(REV[k]){txt=REV[k];sub='Puntos '+k.split('').join(', ');}
+  else{txt='?';sub='Puntos '+k.split('').join(', ')+' · no es una letra del alfabeto';}
+  big.textContent=txt;big.style.fontSize=(txt==='espacio')?'2rem':'';
+  pts.textContent=sub;
+  if(target){
+    if(k===MAP[target]){msg.textContent='✔ ¡Correcto! Formaste la «'+target+'».';msg.style.color='var(--good-ink)';}
+    else{msg.textContent='';}
+  }else{msg.textContent='';}
+}
+document.getElementById('btnClear').addEventListener('click',function(){st=[0,0,0,0,0,0];render();});
+document.getElementById('btnReto').addEventListener('click',function(){
+  var ks=Object.keys(MAP).filter(function(x){return x!==target;});
+  target=ks[Math.floor(Math.random()*ks.length)];
+  st=[0,0,0,0,0,0];
+  document.getElementById('retoTxt').textContent='Forma la letra: '+target.toUpperCase();
+  render();
+});
+document.getElementById('pad').addEventListener('keydown',function(e){
+  if(e.key>='1'&&e.key<='6'){tog(parseInt(e.key,10)-1);}
+});
+render();
+
+/* Escribe tu nombre */
+function encode(text){
+  var out=[],inNum=false;
+  var chars=Array.from(text.normalize('NFC'));
+  chars.forEach(function(ch){
+    if(ch===' '){out.push({p:'',l:' ',c:'espacio'});inNum=false;return;}
+    if(/[0-9]/.test(ch)){
+      if(!inNum){out.push({p:'3456',l:'#',c:'signo núm.',pre:true});inNum=true;}
+      out.push({p:MAP[NUM[ch]],l:ch});return;
+    }
+    inNum=false;
+    var lo=ch.toLowerCase();
+    if(MAP[lo]!==undefined){
+      if(ch!==lo){out.push({p:'46',l:'⇧',c:'signo mayús.',pre:true});}
+      out.push({p:MAP[lo],l:ch});
+    }
+  });
+  return out;
+}
+function drawName(){
+  var v=document.getElementById('nameIn').value;
+  var cells=encode(v);
+  document.getElementById('nameOut').innerHTML=cells.length?cells.map(function(c){
+    return cellHTML(c.p,esc(c.l),c.c,c.pre?'prefix':'');
+  }).join(''):'<span style="color:var(--ink-soft)">Escribe algo para verlo en Braille.</span>';
+}
+document.getElementById('nameIn').addEventListener('input',drawName);
+document.getElementById('nameClear').addEventListener('click',function(){var i=document.getElementById('nameIn');i.value='';drawName();i.focus();});
+drawName();
+
+/* Alfabeto completo */
+(function(){
+  var groups=[
+    ['Serie 1 · puntos 1, 2, 4 y 5','abcdefghij'],
+    ['Serie 2 · la serie 1 más el punto 3','klmnopqrst'],
+    ['Serie 3 · puntos 3 y 6','uvxyz'],
+    ['Propias del español','wñü'],
+    ['Vocales con tilde','áéíóú']
+  ];
+  var h='';
+  groups.forEach(function(g){
+    h+='<span class="series-title">'+g[0]+'</span><div class="series">';
+    g[1].split('').forEach(function(ch){h+=cellHTML(MAP[ch],ch);});
+    h+='</div>';
+  });
+  h+='<span class="series-title">Signos de prefijo</span><div class="series">'+
+    cellHTML('46','⇧','signo mayús.','prefix')+cellHTML('3456','#','signo núm.','prefix')+'</div>';
+  h+='<span class="series-title">Números · signo de número (3-4-5-6) + letras a a j</span><div class="series">'+
+    cellHTML('3456','#','signo núm.','prefix');
+  '1234567890'.split('').forEach(function(d){h+=cellHTML(MAP[NUM[d]],d);});
+  h+='</div>';
+  document.getElementById('alfa').innerHTML=h;
+})();
+})();
+</script>
+</body>
+</html>
